@@ -53,13 +53,15 @@ public class Utils
    }
    
    public static String timestampDifference(long ts1, long ts2) {
-      int granularity = 2;
-      
       long difference = (ts1 - ts2) / 1000; // I timestamp sono in ms e non in sec
+      if ( difference <= 0 ) {
+         return "0 second";
+      }
+
       String strIntervals[][] = new String[][] {
          new String[] { "year",      "years" },
          new String[] { "month",     "months" },
-         new String[] { "week",      "weekd" },
+         new String[] { "week",      "weeks" },
          new String[] { "day",       "days" },
          new String[] { "hour",      "hours" },
          new String[] { "minute",    "minutes" },
@@ -67,25 +69,22 @@ public class Utils
       };
       
       Long lngIntervals[] = new Long[] {
-         new Long(31556926),  // year
-         new Long(2628000),   // month
-         new Long(604800),    // week
-         new Long(86400),
-         new Long(3600),
-         new Long(60),
-         new Long(1)
+         (long) 31556926,  // year
+         (long) 2628000,   // month
+         (long) 604800,    // week
+         (long) 86400,
+         (long) 3600,
+         (long) 60,
+         (long) 1
       };
       
-      if ( difference <= 0 ) {
-         return "0 second";
-      }
-      
+      int granularity = 2;
       String retval = "";
       double time;
       for ( int i =0; i<strIntervals.length; i++ ) {
-         if ( difference >= lngIntervals[i].longValue() ) {
-            time = Math.floor( (double)(difference / lngIntervals[i].longValue()) );
-            difference %= lngIntervals[i].longValue();
+         if ( difference >= lngIntervals[i] ) {
+            time = Math.floor( (double)(difference / lngIntervals[i]) );
+            difference %= lngIntervals[i];
             retval += (retval.length() > 0 ? " " : "") + (int)time +" ";
             retval += ((time > 1) ? strIntervals[i][1] : strIntervals[i][0]);
             granularity--;
