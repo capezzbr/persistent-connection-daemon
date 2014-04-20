@@ -33,17 +33,20 @@ public class ConnectedDeviceManager extends Thread {
    @Override
    public void run() {
       try {
-         Utils.log(TAG, "Waiting for the auth json ...");
+         Utils.log(TAG, "Waiting for the welcome json ...");
          try {
             mNewDevice.readWelcomeJSON();
          } catch (JSONException ex) {
             abortDeviceConnection(ex.getMessage());
+            return;
          } catch (IOException ex) {
             abortDeviceConnection(ex.getMessage());
+            return;
          }
          
          if ( !authenticateDevice() ) {
             abortDeviceConnection("Unable to authenticate the device");
+            return;
          }
          
          Utils.log(TAG, "Authentication success!\n"
