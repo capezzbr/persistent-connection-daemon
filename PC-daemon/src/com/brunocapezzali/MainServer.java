@@ -59,10 +59,7 @@ public class MainServer {
    }
    
    private boolean isLocalConnection(InetAddress addr) {
-      if ( addr.isLoopbackAddress() || addr.equals(mLANAddress) ) {
-         return true;
-      }
-      return false;
+      return ( addr.isLoopbackAddress() || addr.equals(mLANAddress) );
    }
    
    private void determinateLocalAddress() {
