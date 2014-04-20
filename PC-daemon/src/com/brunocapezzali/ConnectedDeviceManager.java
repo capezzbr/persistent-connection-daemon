@@ -9,13 +9,11 @@ public class ConnectedDeviceManager extends Thread {
    private static final String TAG = "ConnectedDeviceManager";
    
    private final MainServer mServer;
-   private Socket mDeviceSock;
-   private Device mNewDevice;
+   private final Device mNewDevice;
    
-   public ConnectedDeviceManager(MainServer server, Socket s) {
+   public ConnectedDeviceManager(MainServer server, Socket deviceSock) throws IOException {
       mServer = server;
-      mDeviceSock = s;
-      mNewDevice = null; // viene inizializzato in start()
+      mNewDevice = new Device(mServer, deviceSock);
    }
       
    private void abortDeviceConnection(String error) {
@@ -35,16 +33,6 @@ public class ConnectedDeviceManager extends Thread {
    @Override
    public void run() {
       try {
-         /* Creiamo il nuovo device e successivamente andiamo a verificare l'autenticazione
-          * e se rispetta alcune parti del protocollo. Se tutto è OK allora questo Device
-          * verrà aggiunto all'elenco dei client validi del demone */
-         try {
-            mNewDevice = new Device(mServer, mDeviceSock);
-            mDeviceSock = null; // non lo rendiamo più accessibile dall'esterno della classe Device
-         } catch (IOException ex) {
-            Utils.log(TAG, "Error while creating new Device: "+ ex.getMessage());
-         }
-         
          Utils.log(TAG, "Waiting for the auth json ...");
          try {
             mNewDevice.readWelcomeJSON();
