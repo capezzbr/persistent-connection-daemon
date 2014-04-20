@@ -28,16 +28,16 @@ public class MainServer {
       d.stopDevice();
       d.sockClose();
    }
-      
-   public Device getDevice(String uniqueIdenfier) {
+         
+   public Device getDevice(String uniqueIdentifier) {
       synchronized (mDevices) {
-         if ( mDevices.containsKey(uniqueIdenfier) ) {
-            Device toReturn = mDevices.get(uniqueIdenfier);
+         if ( mDevices.containsKey(uniqueIdentifier) ) {
+            Device toReturn = mDevices.get(uniqueIdentifier);
             if ( toReturn.isDeviceActive() ) {
                return toReturn;
             } else {
                Utils.log(TAG, "Device with uniqueIdentifier = "
-                       + uniqueIdenfier +" found, but NOT isDeviceActive()");
+                       + uniqueIdentifier +" found, but NOT isDeviceActive()");
                removeDevice(toReturn);
             }
          }
@@ -78,8 +78,7 @@ public class MainServer {
       try {
          serverSocket = new ServerSocket(Config.kDaemonPort);
       } catch (IOException e) {
-         Utils.log(TAG, "Could not listen on port: "
-                 + Config.kDaemonPort);
+         Utils.log(TAG, "Could not listen on port: "+ Config.kDaemonPort);
          System.exit(2);
       }
       
@@ -105,7 +104,8 @@ public class MainServer {
             try {
                ( new ConnectedScriptManager(this, client) ).start();
             } catch (IOException ioex) {
-               Utils.log(TAG, "Unable to manage the script connection: "+ ioex.getMessage());
+               Utils.log(TAG, "Unable to manage the script connection: "
+                       + ioex.getMessage());
             }
          } else {
             Utils.log(TAG, "New device connection ("+ clientAddress.toString() +")");
