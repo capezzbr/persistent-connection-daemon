@@ -7,17 +7,22 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
-public class MainServer {
+public class MainServer extends Thread {
    private static final String TAG = "MainServer";
 
    private final long mStartTimestamp = System.currentTimeMillis();
    private InetAddress mLANAddress = null;
    private final HashMap<String, Device> mDevices = new HashMap<String, Device>();
+   private boolean allRemoteConnection = false;
    
    public long getStartTimestamp() {
       return mStartTimestamp;
    }
    
+   public void setAllRemoteConnection(boolean allRemoteConnection) {
+      this.allRemoteConnection = allRemoteConnection;
+   }
+      
    public void removeDevice(Device d) {
       Utils.log(TAG, "Removing device with uniqueIdentifier = "
               + d.getUniqueIdentifier()  +", connected since "
@@ -58,6 +63,12 @@ public class MainServer {
       }
    }
    
+   public int getDevicesCount() {
+      synchronized (mDevices) {
+         return mDevices.size();
+      }
+   }
+   
    private boolean isLocalConnection(InetAddress addr) {
       return ( addr.isLoopbackAddress() || addr.equals(mLANAddress) );
    }
@@ -71,7 +82,8 @@ public class MainServer {
       }      
    }
 
-   public void start() {      
+   @Override
+   public void run() {
       determinateLocalAddress();
       
       ServerSocket serverSocket = null;
@@ -98,18 +110,19 @@ public class MainServer {
          // se IP localIP allora comando da server PHP per client
          // altrimenti è un normale client di cui dobbiamo gestire
          // l'autenticazione
-         clientAddress = client.getInetAddress();
-         if ( isLocalConnection(clientAddress) ) {
-            Utils.log(TAG, "New local script connection");
-            try {
+         clientAddress = client.getInetAddress();         
+         
+         try {
+            if ( isLocalConnection(clientAddress) && !allRemoteConnection ) {
+               Utils.log(TAG, "New local script connection");
                ( new ConnectedScriptManager(this, client) ).start();
-            } catch (IOException ioex) {
-               Utils.log(TAG, "Unable to manage the script connection: "
-                       + ioex.getMessage());
+            } else {
+               Utils.log(TAG, "New device connection ("+ clientAddress.toString() +")");
+               ( new ConnectedDeviceManager(this, client) ).start();
             }
-         } else {
-            Utils.log(TAG, "New device connection ("+ clientAddress.toString() +")");
-            ( new ConnectedDeviceManager(this, client) ).start();
+         } catch (IOException ioex) {
+            Utils.log(TAG, "ERROR: Unable to manage the new connection: "
+                    + ioex.getMessage());
          }
       }
    }
