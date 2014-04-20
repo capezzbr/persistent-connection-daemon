@@ -3,6 +3,7 @@ package com.brunocapezzali;
 
 import java.io.IOException;
 import java.net.Socket;
+import org.json.JSONException;
 
 public class ConnectedDeviceManager extends Thread {
    private static final String TAG = "ConnectedDeviceManager";
@@ -47,7 +48,9 @@ public class ConnectedDeviceManager extends Thread {
          Utils.log(TAG, "Waiting for the auth json ...");
          try {
             mNewDevice.readWelcomeJSON();
-         } catch (Exception ex) {
+         } catch (JSONException ex) {
+            abortDeviceConnection(ex.getMessage());
+         } catch (IOException ex) {
             abortDeviceConnection(ex.getMessage());
          }
          
