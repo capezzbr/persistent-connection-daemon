@@ -105,7 +105,11 @@ public class MainServer {
          clientAddress = client.getInetAddress();
          if ( isLocalConnection(clientAddress) ) {
             Utils.log(TAG, "New local script connection");
-            ( new ConnectedScriptManager(this, client) ).start();
+            try {
+               ( new ConnectedScriptManager(this, client) ).start();
+            } catch (IOException ioex) {
+               Utils.log(TAG, "Unable to manage the script connection: "+ ioex.getMessage());
+            }
          } else {
             Utils.log(TAG, "New device connection ("+ clientAddress.toString() +")");
             ( new ConnectedDeviceManager(this, client) ).start();
