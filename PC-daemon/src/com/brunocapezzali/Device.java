@@ -33,7 +33,7 @@ import org.json.JSONObject;
 public class Device extends Thread {
    private static final String TAG = "Device";
 
-   private MainServer mServer;
+   private final MainServer mServer;
 
    private String mIdentifier;
    private final Socket mSock;
@@ -43,7 +43,7 @@ public class Device extends Thread {
    /* Statistics & informations (useful for futures plug-ins) */
    private String mNetworkType;
    private String mModel;
-   private long mTimestampConnected;
+   private final long mTimestampConnected;
    private long mTimestampLastKeepAlive;
    private String mLastCommand;
    
