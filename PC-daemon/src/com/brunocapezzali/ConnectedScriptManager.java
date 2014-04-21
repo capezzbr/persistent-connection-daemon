@@ -86,16 +86,16 @@ public class ConnectedScriptManager extends Thread {
       }
    }
    
-   private void readWelcomeJSON() throws IOException, JSONException {
+   private void readCommandJSON() throws IOException, JSONException {
       /* Come messaggio di benvenuto viene inviato un JSON contenente
        * il deviceIdentifier al quale parlare e il comando da inviare.
        * N.B. Qui, al contrario di un device non c'è bisogno di autenticazione
        *      in quanto essendo la connessione dalla stessa macchina del server
        *      PHP siamo sicuri che sia lecita.
        */
-      Utils.log(TAG, "Waiting for welcome json ...");
+      Utils.log(TAG, "Waiting for command json ...");
       String line = sockReadln();
-      Utils.log(TAG, "... welcome json = "+ line);
+      Utils.log(TAG, "... command json = "+ line);
       JSONObject json = new JSONObject(line);
       mDeviceIdentifier = json.getString("deviceIdentifier");
       mDeviceCmd = json.getString("cmd");
@@ -104,14 +104,14 @@ public class ConnectedScriptManager extends Thread {
    @Override
    public void run() {
       try {
-         Utils.log(TAG, "Waiting for the auth json ...");
+         Utils.log(TAG, "Waiting for the command json ...");
          try {
-            readWelcomeJSON();
+            readCommandJSON();
          } catch (JSONException jex) {
-            sockAbort("Error while parsing welcome json: "+ jex.getMessage());
+            sockAbort("Error while parsing command json: "+ jex.getMessage());
             return;
          } catch (IOException ioex) {
-            sockAbort("Error while receiving welcome json: "+ ioex.getMessage());
+            sockAbort("Error while receiving command json: "+ ioex.getMessage());
             return;
          }
          

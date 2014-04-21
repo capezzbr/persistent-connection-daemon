@@ -10,9 +10,11 @@ import java.util.HashMap;
 public class MainServer extends Thread {
    private static final String TAG = "MainServer";
 
+   private ServerSocket mServerSocket = null;
    private final long mStartTimestamp = System.currentTimeMillis();
    private InetAddress mLANAddress = null;
    private final HashMap<String, Device> mDevices = new HashMap<String, Device>();
+   private boolean mStop = false;
    private boolean allRemoteConnection = false;
    
    public long getStartTimestamp() {
@@ -22,7 +24,26 @@ public class MainServer extends Thread {
    public void setAllRemoteConnection(boolean allRemoteConnection) {
       this.allRemoteConnection = allRemoteConnection;
    }
-      
+   
+   synchronized public void stopServer() {
+      Utils.log(TAG, "Server shutdowning ...");
+      mStop = true;
+      try {
+         mServerSocket.close();
+      } catch (IOException ioex ) {
+         Utils.log(TAG, "Exception while stopping server: "+ ioex.getMessage());
+      }
+      removeAllDevices();
+   }
+   
+   private void removeAllDevices() {
+      synchronized (mDevices) {
+         for (String key : mDevices.keySet()) {
+            removeDevice(mDevices.get(key));
+         }
+      }
+   }
+   
    public void removeDevice(Device d) {
       Utils.log(TAG, "Removing device with uniqueIdentifier = "
               + d.getUniqueIdentifier()  +", connected since "
@@ -86,22 +107,20 @@ public class MainServer extends Thread {
    public void run() {
       determinateLocalAddress();
       
-      ServerSocket serverSocket = null;
       try {
-         serverSocket = new ServerSocket(Config.kDaemonPort);
+         mServerSocket = new ServerSocket(Config.kDaemonPort);
       } catch (IOException e) {
          Utils.log(TAG, "Could not listen on port: "+ Config.kDaemonPort);
          System.exit(2);
       }
-      
       Utils.log(TAG, "Listening on "+ mLANAddress.toString() +":"
               + Config.kDaemonPort);
       
       Socket client;
       InetAddress clientAddress;
-      while (true) {
+      while ( !mStop ) {
          try {
-            client = serverSocket.accept();
+            client = mServerSocket.accept();
          } catch (IOException e) {
             Utils.log(TAG, "Accept failed: "+ e.getMessage());
             continue;

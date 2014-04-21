@@ -81,6 +81,7 @@ public class Command {
    /**
     * Notifies the command receiver when the command output 
     * was received via the <i>persistent socket</i>.
+    * @param reply
     */
    public void notifyCommandReceiver(String reply) {
       mCommandReceiver.notifyCommandReply(reply);
