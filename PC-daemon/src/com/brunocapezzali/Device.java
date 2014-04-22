@@ -107,7 +107,7 @@ public class Device extends Thread {
       return !mStopThread;
    }
    
-   public void incrementCommandTimeoutCount() {
+   private void incrementCommandTimeoutCount() {
       mCommandTimeoutCount++;
       if ( mCommandTimeoutCount >= Config.kDeviceMaxTimeout ) {
          Utils.log(TAG, "Too many command timeout ("+ 
@@ -140,7 +140,7 @@ public class Device extends Thread {
       }
    }
    
-   public void removeCommandById(String id) {
+   private void removeCommandById(String id) {
       synchronized(mCommands) {
          if ( mCommands.containsKey(id) ) {
             mCommands.remove(id);
@@ -162,8 +162,10 @@ public class Device extends Thread {
             
             /* Check if there is data into the socket and check the type 
              * of data: KeepAlive or a command reply */
-            if ( sockSafeHaveData() && (line = sockSafeReadln()) != null) {
-               if ( line.equals(Config.kDeviceKeepAlive) ) {
+            if ( sockSafeHaveData() && (line = sockSafeReadln()) != null 
+                    && line.length() > 0 ) {
+               
+               if ( line.equals( Config.kDeviceKeepAlive ) ) {
                   replyToKeepAlive();
                } else {
                   manageCommandReply(line);
@@ -173,7 +175,8 @@ public class Device extends Thread {
             
             // Check if this socket is broken (no data read before the timeout)
             if ( isKeepAliveTimeout() ) {
-               Utils.log(TAG, "run() - Too time from the last received Keep-Alive. Aborting device connection.");
+               Utils.log(TAG, "run() - Too time from the last received Keep-Alive. "
+                       + "Aborting device connection.");
                mStopThread = true;
                break;
             }
@@ -255,6 +258,11 @@ public class Device extends Thread {
       }
    }
 
+   public void commandExecutionTimedout(String commandId) {
+      removeCommandById(commandId);
+      incrementCommandTimeoutCount();
+   }
+   
    private boolean sockSafeHaveData() {
       synchronized(mReader) {
          try {
