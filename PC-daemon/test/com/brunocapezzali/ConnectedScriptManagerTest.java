@@ -1,11 +1,12 @@
 package com.brunocapezzali;
 
 import java.io.IOException;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -30,11 +31,7 @@ public class ConnectedScriptManagerTest {
    }
 
    @Before
-   public void setUp() {
-      connectScript();
-   }
-   
-   private void connectScript() {
+   public void connectSimulatedScript() {
       try {
          mMainServer.setAllRemoteConnection(false); // default value
          mSimulatedScript = new TestClientSimulator();
@@ -43,15 +40,34 @@ public class ConnectedScriptManagerTest {
       }
    }
    
-   private void connectAndAuthenticateNewDevice() {
+   private void connectAndAuthenticateSimulatedDevice() {
       try {
          mMainServer.setAllRemoteConnection(true); // only for debug purpose
          mSimulatedDevice = new TestClientSimulator();
          TestsConfig.delay(100);
-         mSimulatedDevice.writeln(TestsConfig.deviceWelcome.toString() +"\n");
+         mSimulatedDevice.writeln(TestsConfig.deviceWelcome.toString());
          TestsConfig.delay(100);
-        } catch (IOException ioex) {
+      } catch (IOException ioex) {
          fail(ioex.getMessage());
+      }
+   }
+   
+   private void simulatedDeviceReadAndReplyCommand() {
+      try {
+         // read command
+         JSONObject recvCommand = new JSONObject(mSimulatedDevice.readln());
+         assertEquals(recvCommand.getString("cmd"), 
+                 TestsConfig.scriptCommandJSON.getString("cmd"));
+
+         // generate command reply
+         JSONObject cmdReply = new JSONObject();
+         cmdReply.put("id", recvCommand.getString("id"));
+         cmdReply.put("reply", TestsConfig.deviceCmdReply);
+         mSimulatedDevice.writeln(cmdReply.toString());
+      } catch (IOException ioex) {
+         fail(ioex.getMessage());
+      } catch (JSONException jex) {
+         fail(jex.getMessage());
       }
    }
    
@@ -59,7 +75,7 @@ public class ConnectedScriptManagerTest {
    public void wrongCommandJSONCheck() {
       System.out.println("* ConnectedScriptManager JUnit4Test: wrongCommandJSONCheck()");
 
-      TestsConfig.delay(100);
+      // simulated script send an invalid command
       mSimulatedScript.writeln(TestsConfig.wrongJSON.toString() +"\n");
       TestsConfig.delay(100);
 
@@ -74,8 +90,8 @@ public class ConnectedScriptManagerTest {
    public void notConnectedDeviceCheck() {
       System.out.println("* ConnectedScriptManager JUnit4Test: notConnectedDeviceCheck()");
 
-      TestsConfig.delay(100);
-      mSimulatedScript.writeln(TestsConfig.scriptCommandJSON.toString() +"\n");
+      // simulated script send a valid command but there isn't a connected device
+      mSimulatedScript.writeln(TestsConfig.scriptCommandJSON.toString());
       TestsConfig.delay(100);
 
       try {
@@ -89,12 +105,15 @@ public class ConnectedScriptManagerTest {
    public void timeoutCommandCheck() {
       System.out.println("* ConnectedScriptManager JUnit4Test: timeoutCommandCheck()");
 
-      connectAndAuthenticateNewDevice();
+      connectAndAuthenticateSimulatedDevice();
       TestsConfig.delay(100);
-      mSimulatedScript.writeln(TestsConfig.scriptCommandJSON.toString() +"\n");
+      
+      // simulated script send a valid command
+      mSimulatedScript.writeln(TestsConfig.scriptCommandJSON.toString());
       TestsConfig.delay(100);
 
       try {
+         // the simulated device never reply, so we go in timeout
          assertEquals(Config.kScriptTimeout, mSimulatedScript.readln());
       } catch (IOException ioex) {
          fail(ioex.getMessage());         
@@ -102,24 +121,26 @@ public class ConnectedScriptManagerTest {
    }
    
    @Test
-   public void everythingsFineCheck() {
+   public void everythingFineCheck() {
       System.out.println("* ConnectedScriptManager JUnit4Test: everythingsFineCheck()");
-      String deviceReply = "perfect!";
+
+      // simulate a device connection
+      TestsConfig.delay(100);
+      connectAndAuthenticateSimulatedDevice();
       
-      connectAndAuthenticateNewDevice();
-      TestsConfig.delay(100);
-      mSimulatedScript.writeln(TestsConfig.scriptCommandJSON.toString() +"\n");
-      TestsConfig.delay(100);
-//      mSimulatedDevice.writeln(deviceReply);
-//      TestsConfig.delay(100);
+      // simulated script send a valid command
+      mSimulatedScript.writeln(TestsConfig.scriptCommandJSON.toString());
+      TestsConfig.delay(1000);
+      
+      // the simulated device read and reply to the script command
+      simulatedDeviceReadAndReplyCommand();
+      TestsConfig.delay(1000);
+      
       try {
-         assertEquals(deviceReply, mSimulatedScript.readln());
+         // the simulated script have to read the same reply sended by the simulateed device
+         assertEquals(TestsConfig.deviceCmdReply, mSimulatedScript.readln());
       } catch (IOException ioex) {
          fail(ioex.getMessage());         
       }
    }
-
-
-
-   
 }

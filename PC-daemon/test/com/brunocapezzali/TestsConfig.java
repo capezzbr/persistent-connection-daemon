@@ -12,15 +12,15 @@ public class TestsConfig {
    public static JSONObject deviceWelcome;
    public static JSONObject scriptCommandJSON;
    public static JSONObject wrongJSON;
+   public static final String deviceCmdReply = "12 days and 3 hours";
 
-   
    private TestsConfig() {
       
       deviceWelcome = new JSONObject();
       deviceWelcome.put("identifier", "C1P8");
       deviceWelcome.put("networkType", "mobile");
       deviceWelcome.put("model", "Droid");
-      deviceWelcome.put("keepAliveInterval", 2000);
+      deviceWelcome.put("keepAliveInterval", 5000);
       
       scriptCommandJSON = new JSONObject();
       scriptCommandJSON.put("deviceIdentifier", "C1P8");

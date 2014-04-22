@@ -36,52 +36,45 @@ public class MainServer extends Thread {
       removeAllDevices();
    }
    
-   private void removeAllDevices() {
-      synchronized (mDevices) {
-         for (String key : mDevices.keySet()) {
-            removeDevice(mDevices.get(key));
-         }
+   synchronized private void removeAllDevices() {
+      for (String key : mDevices.keySet()) {
+         removeDevice(mDevices.get(key));
       }
    }
    
-   public void removeDevice(Device d) {
+   synchronized public void removeDevice(Device d) {
       Utils.log(TAG, "Removing device with uniqueIdentifier = "
               + d.getUniqueIdentifier()  +", connected since "
               + Utils.timestampDifferenceNow(d.getTimestampConnected()));
-      synchronized (mDevices) {
-         mDevices.remove(d.getUniqueIdentifier());
-      }
+      
+      mDevices.remove(d.getUniqueIdentifier());
       d.stopDevice();
       d.sockClose();
    }
          
-   public Device getDevice(String uniqueIdentifier) {
-      synchronized (mDevices) {
-         if ( mDevices.containsKey(uniqueIdentifier) ) {
-            Device toReturn = mDevices.get(uniqueIdentifier);
-            if ( toReturn.isDeviceActive() ) {
-               return toReturn;
-            } else {
-               Utils.log(TAG, "Device with uniqueIdentifier = "
-                       + uniqueIdentifier +" found, but NOT isDeviceActive()");
-               removeDevice(toReturn);
-            }
+   synchronized public Device getDevice(String uniqueIdentifier) {
+      if ( mDevices.containsKey(uniqueIdentifier) ) {
+         Device toReturn = mDevices.get(uniqueIdentifier);
+         if ( toReturn.isDeviceActive() ) {
+            return toReturn;
+         } else {
+            Utils.log(TAG, "Device with uniqueIdentifier = "
+                    + uniqueIdentifier +" found, but NOT isDeviceActive()");
+            removeDevice(toReturn);
          }
-         return null;
       }
+      return null;
    }
    
-   public void addDevice(Device device) {
-      synchronized (mDevices) {
-         if ( mDevices.containsKey(device.getUniqueIdentifier()) ) {
-            Device toRemove = mDevices.get(device.getUniqueIdentifier());
-            Utils.log(TAG, "Device with uniqueIdentifier = "
-                    + toRemove.getUniqueIdentifier() +" already in list.");
-            removeDevice(toRemove);
-         }
-         mDevices.put(device.getUniqueIdentifier(), device);
-         device.start();
+   synchronized public void addDevice(Device device) {
+      if ( mDevices.containsKey(device.getUniqueIdentifier()) ) {
+         Device toRemove = mDevices.get(device.getUniqueIdentifier());
+         Utils.log(TAG, "Device with uniqueIdentifier = "
+                 + toRemove.getUniqueIdentifier() +" already in list.");
+         removeDevice(toRemove);
       }
+      mDevices.put(device.getUniqueIdentifier(), device);
+      device.start();
    }
    
    public int getDevicesCount() {

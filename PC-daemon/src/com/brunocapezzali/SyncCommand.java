@@ -35,10 +35,8 @@ public class SyncCommand implements Command.CommandReceiver {
       }
 
       if ( !replyArrived ) {
-         device.removeCommandById(mCmdId);
-         device.incrementCommandTimeoutCount();
+         device.commandExecutionTimedout(mCmdId);
          throw new TimeoutException("No reply after "+ (timeout / 1000) +"sec");
-         
       }
       return mCmdReply;
    }
