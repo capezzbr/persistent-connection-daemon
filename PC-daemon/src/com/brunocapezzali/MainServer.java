@@ -77,10 +77,8 @@ public class MainServer extends Thread {
       device.start();
    }
    
-   public int getDevicesCount() {
-      synchronized (mDevices) {
-         return mDevices.size();
-      }
+   synchronized public int getDevicesCount() {
+      return mDevices.size();
    }
    
    private boolean isLocalConnection(InetAddress addr) {
