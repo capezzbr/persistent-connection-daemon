@@ -30,12 +30,11 @@ public class TestsConfig {
       wrongJSON.put("WrongField1", "none");
       wrongJSON.put("WrongField2", "none");
    }
-   
-   synchronized public static TestsConfig getInstance() {
+      
+   synchronized public static void initInstance() {
       if ( mInstance == null ) {
          mInstance = new TestsConfig();
       }
-      return mInstance;
    }
    
    public static void delay(long ms) {
