@@ -275,10 +275,7 @@ public class Device extends Thread {
       }
    }
    
-   public void readWelcomeJSON() throws JSONException, IOException {
-      String strJson = sockReadln();
-      Utils.log(TAG, "Received auth json: "+ strJson);
-      
+   public void readWelcomeJSON(String strJson) throws JSONException {     
       JSONObject json = new JSONObject(strJson);
       mIdentifier = json.getString("identifier");
       mNetworkType = json.getString("networkType");
@@ -295,7 +292,7 @@ public class Device extends Thread {
       }
    }
 
-   private String sockReadln() throws IOException {
+   public String sockReadln() throws IOException {
       synchronized(mReader) {
          return mReader.readLine();
       }
