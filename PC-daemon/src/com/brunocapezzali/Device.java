@@ -275,7 +275,7 @@ public class Device extends Thread {
       }
    }
    
-   public void readWelcomeJSON(String strJson) throws JSONException {     
+   public void parseWelcomeJSON(String strJson) throws JSONException {     
       JSONObject json = new JSONObject(strJson);
       mIdentifier = json.getString("identifier");
       mNetworkType = json.getString("networkType");
@@ -325,13 +325,13 @@ public class Device extends Thread {
       String lastKeepAlive = Utils.timestampDifferenceNow(getTimestampLastKeepAlive());
       
       StringBuilder sb = new StringBuilder();
-      sb.append("Identifier: ").append(getUniqueIdentifier());
-      sb.append("Model: ").append(getModel());
-      sb.append("Network type: ").append(getNetworkType());
-      sb.append("Connected since: ").append(connectedSince);
-      sb.append("Is active? ").append(isDeviceActive());
-      sb.append("Keep-Alive interval: ").append(getKeepAliveInterval() / 1000 / 60);
-      sb.append("Last Keep-Alive received: ").append(lastKeepAlive);
+      sb.append("Identifier: ").append(getUniqueIdentifier()).append(", ");
+      sb.append("Model: ").append(getModel()).append(", ");
+      sb.append("Network type: ").append(getNetworkType()).append(", ");
+      sb.append("Connected since: ").append(connectedSince).append(", ");
+      sb.append("Is active? ").append(isDeviceActive()).append(", ");
+      sb.append("Keep-Alive interval: ").append(getKeepAliveInterval() / 1000 / 60).append(", ");
+      sb.append("Last Keep-Alive received: ").append(lastKeepAlive).append(", ");
       sb.append("Last command: ").append(getLastCommand());
       
       return sb.toString();
