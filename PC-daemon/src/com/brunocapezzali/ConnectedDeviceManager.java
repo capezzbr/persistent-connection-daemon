@@ -37,7 +37,7 @@ public class ConnectedDeviceManager extends Thread {
          try {
             String strJson = mNewDevice.sockReadln();
             Utils.log(TAG, "Received auth json: "+ strJson);
-            mNewDevice.readWelcomeJSON(strJson);
+            mNewDevice.parseWelcomeJSON(strJson);
          } catch (JSONException ex) {
             abortDeviceConnection(ex.getMessage());
             return;
