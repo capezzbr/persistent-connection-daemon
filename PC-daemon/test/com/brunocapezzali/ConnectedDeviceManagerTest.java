@@ -1,7 +1,6 @@
 package com.brunocapezzali;
 
 import java.io.IOException;
-import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,7 @@ public class ConnectedDeviceManagerTest {
       
    @BeforeClass
    public static void setupEnvironment() {
-      TestsConfig.getInstance();
+      TestsConfig.initInstance();
       mMainServer = new MainServer();
       mMainServer.start();
    }
@@ -44,7 +43,7 @@ public class ConnectedDeviceManagerTest {
       int devicesBefore = mMainServer.getDevicesCount();
       
       TestsConfig.delay(100);
-      mSimulatedDevice.writeln(TestsConfig.wrongJSON.toString() +"\n");
+      mSimulatedDevice.writeln(TestsConfig.wrongJSON.toString());
       TestsConfig.delay(100);
 
       assertTrue(mMainServer.getDevicesCount() == devicesBefore);      
@@ -56,10 +55,11 @@ public class ConnectedDeviceManagerTest {
       int devicesBefore = mMainServer.getDevicesCount();
 
       TestsConfig.delay(100);
-      mSimulatedDevice.writeln(TestsConfig.deviceWelcome.toString() +"\n");
+      mSimulatedDevice.writeln(TestsConfig.deviceWelcome.toString());
       TestsConfig.delay(100);
 
       assertTrue(mMainServer.getDevicesCount() == devicesBefore + 1);
-      assertNotNull(mMainServer.getDevice("C1P8"));
+      assertNotNull(mMainServer.getDevice(
+              TestsConfig.deviceWelcome.getString("identifier")));
    }
 }
