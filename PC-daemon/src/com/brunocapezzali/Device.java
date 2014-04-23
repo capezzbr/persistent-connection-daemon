@@ -99,6 +99,9 @@ public class Device extends Thread {
       return mLastCommand;
    }
    
+   /**
+    * Do not use directly. Instead use MainServer.removeDevice(this).
+    */
    synchronized public void stopDevice() {
       mStopThread = true;
    } 
@@ -112,7 +115,7 @@ public class Device extends Thread {
       if ( mCommandTimeoutCount >= Config.kDeviceMaxTimeout ) {
          Utils.log(TAG, "Too many command timeout ("+ 
                  Config.kDeviceMaxTimeout +"), removing zombie device.");
-         stopDevice();
+         mServer.removeDevice(this);
       } else {
          Utils.log(TAG, "Number of commands timeout incremented: "+ 
                  mCommandTimeoutCount);
@@ -185,15 +188,13 @@ public class Device extends Thread {
             sendUnsentCommands();
             
             try {
-               Thread.sleep(500);
+               Thread.sleep(100);
             } catch (InterruptedException t) {}
             
          }
          Utils.log(TAG, "run() - Thread stopped!");
       } catch (Exception eex) {
          Utils.log(TAG, "run() - Unhandled error: "+ eex.getMessage());
-      } finally {
-         mServer.removeDevice(this);
       }
    }
    
