@@ -20,7 +20,7 @@ public class ConnectedScriptManagerTest {
 
    @BeforeClass
    public static void setUpClass() {
-      TestsConfig.getInstance();
+      TestsConfig.initInstance();
       mMainServer = new MainServer();
       mMainServer.start();
    }
