@@ -1,4 +1,29 @@
 persistent-connection-daemon
 ============================
 
-Persistent connection daemon for mobile devices written in java.
+A persistent connection daemon for mobile devices written in java. Sometimes we need to keep track of mobile devices connected to our services for sending or retrieve data. It's difficult to keep a persistent connection due to the mobility of smartphone (the device often change network). For solve this problem I've developed this Daemon that keep opened and active sockets.
+The image below explain the infrastructure of the system:
+
+![Scheme](environment_scheme.PNG)
+
+How To Get Started 
+==================
+
+Daemon
+---------
+1. Open the NetBeans project and setup the right configuration in Config.java
+2. Compile the daemon (Run > Clean and Build Project)
+3. Start it using ```java -jar PCDaemon.jar 2>&1 /var/log/PCDaemon.log```
+4. Check logs using ```tail -f /var/log/PCDaemon.log```
+
+Script
+---------
+1. Check the basic PHP script available [here](/example/AsyncRequest/AsyncRequestTests/AsyncRequestTests.m)
+
+Unit Tests
+---------
+Some **unit tests** are available [here](/example/AsyncRequest/AsyncRequestTests/AsyncRequestTests.m)
+
+License 
+---------
+AsyncRequest is available under the MIT license. See the LICENSE file for more info.
