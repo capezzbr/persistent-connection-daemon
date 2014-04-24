@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 /**
  * Rapresents a command which is sent by a script, readed 
- * using a {@link ScriptThread} and managed by a {@link Device}. 
+ * using a {@link ConnectedScriptManager} and managed by a {@link Device}. 
  * It will be encoded into a JSON and sent to a device via the 
  * <i>persistent socket</i>. When the device receive and execute 
  * the command return the output of its execution via the same 
@@ -15,7 +15,7 @@ import org.json.JSONObject;
  * 
  * @author Bruno Capezzali
  * @see Device
- * @see ScriptThread
+ * @see ConnectedScriptManager
  * @since 1.0.0
  */
 public class Command {  
@@ -81,7 +81,7 @@ public class Command {
    /**
     * Notifies the command receiver when the command output 
     * was received via the <i>persistent socket</i>.
-    * @param reply
+    * @param reply is the reply to the command sent to a device
     */
    public void notifyCommandReceiver(String reply) {
       mCommandReceiver.notifyCommandReply(reply);

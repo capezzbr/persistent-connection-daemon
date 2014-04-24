@@ -7,6 +7,19 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+/**
+ * Rapresents the Daemon that accepts and manage all the connections. 
+ * If a new connection is local then we have a {@link ConnectedScriptManager},
+ * instead if the connection is remove we have a {@link ConnectedDeviceManager}.
+ * Other than manage all the connection this class will maintain the list of all
+ * connected and still active persistent sockets, so if a {@link Device} is
+ * connected we can verifiy by asking to {@link MainServer}.
+ * 
+ * @author Bruno Capezzali
+ * @see ConnectedDeviceManager
+ * @see ConnectedScriptManager
+ * @since 1.0.0
+ */
 public class MainServer extends Thread {
    private static final String TAG = "MainServer";
 
@@ -117,11 +130,9 @@ public class MainServer extends Thread {
             continue;
          }
          
-         // se IP localIP allora comando da server PHP per client
-         // altrimenti è un normale client di cui dobbiamo gestire
-         // l'autenticazione
+         /* If we have a local connection then this is a script request else
+          * we have a new connected device. */
          clientAddress = client.getInetAddress();         
-         
          try {
             if ( isLocalConnection(clientAddress) && !allRemoteConnection ) {
                Utils.log(TAG, "New local script connection");

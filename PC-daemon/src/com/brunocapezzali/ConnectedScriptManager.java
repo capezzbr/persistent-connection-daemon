@@ -12,6 +12,21 @@ import java.util.concurrent.TimeoutException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Rapresents a new local-script connection to the Daemon that has to be
+ * managed. A local-script connection is trusted so we can avoid the
+ * authneticate process.
+ * When a script wants to send a command to a {@link Device} he connect to the
+ * Daemon and send a JSON request (where is specified the device identifier and a
+ * command). When the Daemon read the request he first check if the
+ * {@link Device} is alive and connected. If the {@link Device} is active, the 
+ * daemon redirect the JSON command to him and wait for a reply. When a reply 
+ * is received, the Daemon will take the response and forward it to the local-script.
+ * 
+ * @author Bruno Capezzali
+ * @see Device
+ * @since 1.0.0
+ */
 public class ConnectedScriptManager extends Thread {
    private static final String TAG = "ConnectedScriptManager";
 
@@ -50,7 +65,7 @@ public class ConnectedScriptManager extends Thread {
       Utils.log(TAG, "Aborting command connection."
               + (error ? "\nERROR: "+ message : " Everything OK") );
 
-      // se è un errore inviamo l'error code a PHP
+      // If an error is occurred we return to the script an error constant
       if ( error ) {
          try {
             sockWriteln(phpRetCode);
@@ -59,7 +74,7 @@ public class ConnectedScriptManager extends Thread {
          }
       }
 
-      // ripuliamo lo stato del socket
+      // Clean the socket state
       try {
          mSock.shutdownOutput();
       } catch (IOException e) {}
@@ -87,12 +102,6 @@ public class ConnectedScriptManager extends Thread {
    }
    
    private void readCommandJSON() throws IOException, JSONException {
-      /* Come messaggio di benvenuto viene inviato un JSON contenente
-       * il deviceIdentifier al quale parlare e il comando da inviare.
-       * N.B. Qui, al contrario di un device non c'è bisogno di autenticazione
-       *      in quanto essendo la connessione dalla stessa macchina del server
-       *      PHP siamo sicuri che sia lecita.
-       */
       Utils.log(TAG, "Waiting for command json ...");
       String line = sockReadln();
       Utils.log(TAG, "... command json = "+ line);
@@ -115,9 +124,9 @@ public class ConnectedScriptManager extends Thread {
             return;
          }
          
-         /* Ritorniamo immediatamente errore nei casi:
-          * - Device non collegato al server
-          * - Device con socket non alive il quale è stato rimosso
+         /* Return immediately an error code if
+          * - Device not connected to the Daemon
+          * - Device with closed device (which is now removed)
           */
          Device device = mServer.getDevice(mDeviceIdentifier);
          if ( device == null ) {
@@ -126,7 +135,7 @@ public class ConnectedScriptManager extends Thread {
          }
          Utils.log(TAG, "Device found and ready for receive command");
                   
-         // Inviamo il comando al device
+         // Send command to the device
          String cmdReply;
          SyncCommand cmdSync = new SyncCommand();
          try {

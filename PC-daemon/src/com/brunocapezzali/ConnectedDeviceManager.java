@@ -5,6 +5,16 @@ import java.io.IOException;
 import java.net.Socket;
 import org.json.JSONException;
 
+/**
+ * Rapresents a new remote connection to the Daemon that has to be
+ * managed. If this new connection send a valid authentication JSON 
+ * and the validation phase done by {@link authenticateDevice()} is ok,
+ * than a new {@link Device} will be created.
+ * 
+ * @author Bruno Capezzali
+ * @see Device
+ * @since 1.0.0
+ */
 public class ConnectedDeviceManager extends Thread {
    private static final String TAG = "ConnectedDeviceManager";
    

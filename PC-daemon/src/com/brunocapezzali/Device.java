@@ -26,8 +26,8 @@ import org.json.JSONObject;
  * <li>Verify for new command's reply.</li>
  * 
  * @author Bruno Capezzali
- * @see NewDeviceThread
- * @see ScriptThread
+ * @see ConnectedDeviceManager
+ * @see ConnectedScriptManager
  * @since 1.0.0
  */
 public class Device extends Thread {
@@ -126,11 +126,7 @@ public class Device extends Thread {
       mCommandTimeoutCount = 0;
       Utils.log(TAG, "Number of commands timeout resetted to 0");
    }
-   
-   /* 
-    * Gestione coda dei comandi che arrivano da un NewCommandThread 
-    */
-   
+      
    public void sendCommand(CommandReceiver t, String id, String cmd) {
       synchronized(mCommands) {
          mCommands.put(id, new Command(t, id, cmd));
