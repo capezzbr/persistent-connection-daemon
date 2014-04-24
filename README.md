@@ -30,16 +30,16 @@ This is really a **basic script** that only send a basic command to a Device wit
 returned by the daemon (no connected device, errore while sending command, ...).
 
 Mobile (Android implementation)
-For implementing a persistent connection in Android I've followed this [blog page]{http://devtcg.blogspot.it/2009/01/push-services-implementing-persistent.html}
-and modified the [**TestKeepAlive** project]{http://code.google.com/p/android-random/source/browse/#svn/trunk/TestKeepAlive}.
+---------
+For implementing a persistent connection in Android I've followed this [blog page](http://devtcg.blogspot.it/2009/01/push-services-implementing-persistent.html)
+and modified the [**TestKeepAlive** project](http://code.google.com/p/android-random/source/browse/#svn/trunk/TestKeepAlive).
 
-The major edit you have to do is inside the class ```KeepAliveService.java``` removing code between line 397 and 402
+The major edit you have to do is inside the class ```KeepAliveService.java``` removing code between line 397-402
 and adding the line
  ```java
- out.write(getAuthString().getBytes());
+out.write(getAuthString().getBytes());
  ```
- 
- where the function ```getAuthString()``` is defined like
+where the function ```getAuthString()``` is defined like
 ```Java
 private String getAuthString() {
 	/* Settings is a singleton that contains all the information about this device */
@@ -56,7 +56,15 @@ private String getAuthString() {
 	return jsonAuth.toString();
 }
 ```
----------
+In line 407-408 the code read continuously form the socket, we need to replace this with the: 
+```java
+BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+String command;
+while ( (command = reader.readLine(reader)) != null ) {
+	/* We pass the readed command to a class that manage everything based on our implementation */
+	( new JSONCommandManager(s, line) ).start();
+}
+```
 
 JUnit Tests
 ---------
