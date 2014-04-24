@@ -8,23 +8,26 @@ For solve this problem I've developed this Daemon that keep active a sockets bet
 Whenever you need to send a command (or data) from your backend script (PHP, Python, Javascript, ...) to a mobile Device
 you only need to ask to the Daemon to do it for you (via a JSON command).
 
+
 The image below explain the infrastructure of the system:
 
-![Scheme](environment_scheme.PNG)
+![Scheme](environment_scheme.png)
 
 How To Get Started 
 ==================
 
 Daemon
 ---------
-1. Open the NetBeans project and setup the right configuration in Config.java
+1. Open the NetBeans project and setup the right configuration in ```Config.java```
 2. Compile the daemon (Run > Clean and Build Project)
 3. Start it using ```java -jar PCDaemon.jar 2>&1 /var/log/PCDaemon.log```
 4. Check logs using ```tail -f /var/log/PCDaemon.log```
 
-Script
+Backend Script
 ---------
-Check the basic PHP script available [here](/scripts/send-cmd.php) and create your own implementation. This is really a basic script, for example he don't manage the possibile errors returned by the daemon (no connected device, errore while sending command, ...).
+Check the basic PHP script available [here](/scripts/send-cmd.php) and create your own implementation.
+This is really a basic script that only send a basic command to a Device without managing the possibile errors 
+returned by the daemon (no connected device, errore while sending command, ...).
 
 Mobile (Android implementation)
 
