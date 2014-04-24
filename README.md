@@ -32,7 +32,7 @@ returned by the daemon (no connected device, errore while sending command, ...).
 Mobile (Android implementation)
 ---------
 For implementing a persistent connection in Android I've followed this [blog page](http://devtcg.blogspot.it/2009/01/push-services-implementing-persistent.html)
-and modified the [**TestKeepAlive** project](http://code.google.com/p/android-random/source/browse/#svn/trunk/TestKeepAlive).
+and modified the [TestKeepAlive](http://code.google.com/p/android-random/source/browse/#svn/trunk/TestKeepAlive) project.
 
 The major edit you have to do is inside the class ```KeepAliveService.java``` removing code between line 397-402
 and adding the line
@@ -61,7 +61,8 @@ In line 407-408 the code read continuously form the socket, we need to replace t
 BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 String command;
 while ( (command = reader.readLine(reader)) != null ) {
-	/* We pass the readed command to a class that manage everything based on our implementation */
+	/* We pass the read command to the class JSONCommandManager that manage 
+	 * everything, based on our implementation */
 	( new JSONCommandManager(s, line) ).start();
 }
 ```
