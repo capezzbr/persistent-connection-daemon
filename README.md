@@ -1,7 +1,13 @@
-Persistent Connection Daemon (PC-daemon)
+Persistent Connection Daemon
 ============================
 
-A persistent connection daemon for mobile devices written in java. Sometimes we need to keep track of mobile devices connected to our services for sending or retrieve data. It's difficult to keep a persistent connection due to the mobility of smartphone (the device often change network). For solve this problem I've developed this Daemon that keep opened and active sockets.
+A persistent connection daemon for **mobile devices** written in java. 
+Sometimes we need to keep track of mobile devices connected to our services for sending or retrieve data. 
+It's difficult to keep a persistent connection due to the mobility of smartphone (the device often change network). 
+For solve this problem I've developed this Daemon that keep active a sockets between the devices and the Daemon.
+Whenever you need to send a command (or data) from your backend script (PHP, Python, Javascript, ...) to a mobile Device
+you only need to ask to the Daemon to do it for you (via a JSON command).
+
 The image below explain the infrastructure of the system:
 
 ![Scheme](environment_scheme.PNG)
