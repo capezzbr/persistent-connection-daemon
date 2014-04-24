@@ -1,4 +1,4 @@
-persistent-connection-daemon
+Persistent Connection Daemon (PC-daemon)
 ============================
 
 A persistent connection daemon for mobile devices written in java. Sometimes we need to keep track of mobile devices connected to our services for sending or retrieve data. It's difficult to keep a persistent connection due to the mobility of smartphone (the device often change network). For solve this problem I've developed this Daemon that keep opened and active sockets.
@@ -18,12 +18,15 @@ Daemon
 
 Script
 ---------
-1. Check the basic PHP script available [here](/example/AsyncRequest/AsyncRequestTests/AsyncRequestTests.m)
+Check the basic PHP script available [here](/scripts/send-cmd.php) and create your own implementation. This is really a basic script, for example he don't manage the possibile errors returned by the daemon (no connected device, errore while sending command, ...).
 
-Unit Tests
+Mobile (Android implementation)
+
+
+JUnit Tests
 ---------
-Some **unit tests** are available [here](/example/AsyncRequest/AsyncRequestTests/AsyncRequestTests.m)
+**JUnit tests** are available [here](PC-daemon/test/com/brunocapezzali)
 
 License 
 ---------
-AsyncRequest is available under the MIT license. See the LICENSE file for more info.
+Persistent Connection Daemon (PC-daemon) is available under the MIT license. See the LICENSE file for more info.
