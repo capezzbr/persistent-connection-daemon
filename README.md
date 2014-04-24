@@ -25,16 +25,42 @@ Daemon
 
 Backend Script
 ---------
-Check the basic PHP script available [here](/scripts/send-cmd.php) and create your own implementation.
-This is really a basic script that only send a basic command to a Device without managing the possibile errors 
+Check the basic **PHP** script available [here](/scripts/send-cmd.php) and create your own implementation.
+This is really a **basic script** that only send a basic command to a Device without managing the possibile errors 
 returned by the daemon (no connected device, errore while sending command, ...).
 
 Mobile (Android implementation)
+For implementing a persistent connection in Android I've followed this [blog page]{http://devtcg.blogspot.it/2009/01/push-services-implementing-persistent.html}
+and modified the [**TestKeepAlive** project]{http://code.google.com/p/android-random/source/browse/#svn/trunk/TestKeepAlive}.
 
+The major edit you have to do is inside the class ```KeepAliveService.java``` removing code between line 397 and 402
+and adding the line
+ ```java
+ out.write(getAuthString().getBytes());
+ ```
+ 
+ where the function ```getAuthString()``` is defined like
+```Java
+private String getAuthString() {
+	/* Settings is a singleton that contains all the information about this device */
+	Settings mySettings = Settings.getInstance();
+	JSONObject jsonAuth = new JSONObject();
+	try {
+		jsonAuth.put("identifier", mySettings.getIdentifier);
+		jsonAuth.put("networkType", mySettings.getNetworkType);
+		jsonAuth.put("model", mySettings.getModel());
+		jsonAuth.put("keepAliveInterval", mySettings.getKeepAliveInterval);
+	} catch (JSONException e) {
+		return "ERROR";
+	}
+	return jsonAuth.toString();
+}
+```
+---------
 
 JUnit Tests
 ---------
-**JUnit tests** are available [here](PC-daemon/test/com/brunocapezzali)
+**JUnit tests** are available [here](PC-daemon/test/com/brunocapezzali).
 
 License 
 ---------
