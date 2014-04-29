@@ -10,7 +10,7 @@ import java.util.HashMap;
 /**
  * Rapresents the Daemon that accepts and manage all the connections. 
  * If a new connection is local then we have a {@link ConnectedScriptManager},
- * instead if the connection is remove we have a {@link ConnectedDeviceManager}.
+ * instead if the connection is remote we have a {@link ConnectedDeviceManager}.
  * Other than manage all the connection this class will maintain the list of all
  * connected and still active persistent sockets, so if a {@link Device} is
  * connected we can verifiy by asking to {@link MainServer}.

@@ -20,7 +20,7 @@ import org.json.JSONObject;
  * Daemon and send a JSON request (where is specified the device identifier and a
  * command). When the Daemon read the request he first check if the
  * {@link Device} is alive and connected. If the {@link Device} is active, the 
- * daemon redirect the JSON command to him and wait for a reply. When a reply 
+ * daemon forward the JSON command to him and wait for a reply. When a reply 
  * is received, the Daemon will take the response and forward it to the local-script.
  * 
  * @author Bruno Capezzali
